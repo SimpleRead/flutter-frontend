@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simpleread/auth.dart';
 
 class SimplereadLogin extends StatefulWidget {
   const SimplereadLogin({super.key});
@@ -16,7 +17,13 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Image(
+            image: AssetImage("images/simpleread-sr.png"),
+            height: AppBar().preferredSize.height,
+          )],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -39,12 +46,14 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
             ),
             Container(
               margin: const EdgeInsets.all(10.0),
-              //padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
               color: theme.colorScheme.primary,
               child: TextButton(
                 onPressed: () {
-                  print(_userController.text);
-                  print(_passController.text);
+                  String user = _userController.text;
+                  String pass = _passController.text;
+                  AuthToken t = new AuthToken(user, pass);
+                  print(t.isValid());
+                  print(t.getError());
                 },
                 child: Text(
                   "Login",
