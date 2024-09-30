@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simpleread/auth.dart';
+import 'package:simpleread/appbar.dart';
 
 class SimplereadLogin extends StatefulWidget {
   const SimplereadLogin({super.key});
@@ -17,13 +18,7 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Image(
-            image: AssetImage("images/simpleread-sr.png"),
-            height: AppBar().preferredSize.height,
-          )],
-        ),
+        title: SimplereadBar(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
