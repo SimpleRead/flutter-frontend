@@ -4,22 +4,20 @@ import 'package:simpleread/appbar.dart';
 import 'package:simpleread/container.dart';
 
 class SimplereadLogin extends StatefulWidget {
-  late final void Function(SimplereadPage) switchPage;
-  SimplereadLogin({super.key, required void Function(SimplereadPage) switchPage}) {
-    this.switchPage = switchPage;
-  }
+  final SimplereadSharedState sharedState;
+  const SimplereadLogin({super.key, sharedState}) : this.sharedState = sharedState;
 
   @override
-  State<SimplereadLogin> createState() => _SimplereadLoginState(switchPage: switchPage!);
+  State<SimplereadLogin> createState() => _SimplereadLoginState(sharedState: sharedState);
 }
 
 class _SimplereadLoginState extends State<SimplereadLogin> {
   final _userController = TextEditingController();
   final _passController = TextEditingController();
-  final void Function(SimplereadPage) switchPage;
+  final SimplereadSharedState sharedState;
 
-  _SimplereadLoginState({required void Function(SimplereadPage) switchPage}) :
-      this.switchPage = switchPage;
+  _SimplereadLoginState({required SimplereadSharedState sharedState}) :
+      this.sharedState = sharedState;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,7 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
                   String pass = _passController.text;
                   AuthToken t = new AuthToken(user, pass);
                   if (t.isValid()) {
-                    switchPage!(SimplereadPage.HOME);
+                    sharedState.switchPage(SimplereadPage.HOME);
                   }
                 },
                 child: Text(

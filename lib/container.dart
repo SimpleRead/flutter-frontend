@@ -13,22 +13,37 @@ class SimplereadContainer extends StatefulWidget {
   State<SimplereadContainer> createState() => _SimplereadContainerState();
 }
 
+class SimplereadSharedState {
+  void Function(SimplereadPage) _switchPage;
+  SimplereadSharedState({required void Function(SimplereadPage) switchPage}) :
+    this._switchPage = switchPage;
+
+  void switchPage(SimplereadPage newPage) {
+    this._switchPage(newPage);
+  }
+}
+
 class _SimplereadContainerState extends State<SimplereadContainer> {
-  SimplereadPage _state = SimplereadPage.LOGIN;
+  late SimplereadSharedState _sharedState;
+  SimplereadPage _currPage = SimplereadPage.LOGIN;
+
+  _SimplereadContainerState() {
+    this._sharedState = new SimplereadSharedState(switchPage: switchPage);
+  }
 
   void switchPage(SimplereadPage newPage) {
     setState(() {
-      _state = newPage;
+      _currPage = newPage;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (_state) {
+    switch (_currPage) {
     case SimplereadPage.HOME:
       return SimplereadHome();
     case SimplereadPage.LOGIN: default:
-      return SimplereadLogin(switchPage: switchPage);
+      return SimplereadLogin(sharedState: _sharedState);
     }
   }
 }
