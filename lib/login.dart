@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/appbar.dart';
+import 'package:simpleread/container.dart';
 
 class SimplereadLogin extends StatefulWidget {
-  const SimplereadLogin({super.key});
+  late final void Function(SimplereadPage) switchPage;
+  SimplereadLogin({super.key, required void Function(SimplereadPage) switchPage}) {
+    this.switchPage = switchPage;
+  }
 
   @override
-  State<SimplereadLogin> createState() => _SimplereadLoginState();
+  State<SimplereadLogin> createState() => _SimplereadLoginState(switchPage: switchPage!);
 }
 
 class _SimplereadLoginState extends State<SimplereadLogin> {
   final _userController = TextEditingController();
   final _passController = TextEditingController();
+  final void Function(SimplereadPage) switchPage;
+
+  _SimplereadLoginState({required void Function(SimplereadPage) switchPage}) :
+      this.switchPage = switchPage;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +55,9 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
                   String user = _userController.text;
                   String pass = _passController.text;
                   AuthToken t = new AuthToken(user, pass);
-                  print(t.isValid());
-                  print(t.getError());
+                  if (t.isValid()) {
+                    switchPage!(SimplereadPage.HOME);
+                  }
                 },
                 child: Text(
                   "Login",

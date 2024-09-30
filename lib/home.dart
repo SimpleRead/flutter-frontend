@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SimplereadNavigator extends StatefulWidget {
-  const SimplereadNavigator({super.key});
+class SimplereadHome extends StatefulWidget {
+  const SimplereadHome({super.key});
 
   @override
-  State<SimplereadNavigator> createState() => _SimplereadNavigatorState();
+  State<SimplereadHome> createState() => _SimplereadHomeState();
 }
 
-class _SimplereadNavigatorState extends State<SimplereadNavigator> {
+class _SimplereadHomeState extends State<SimplereadHome> {
   int currentPageIndex = 0;
 
   @override
