@@ -54,6 +54,7 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
                   String pass = _passController.text;
                   AuthToken t = new AuthToken(user, pass);
                   if (t.isValid()) {
+                    sharedState.token = t;
                     sharedState.switchPage(SimplereadPage.HOME);
                   }
                 },

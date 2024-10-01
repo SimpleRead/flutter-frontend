@@ -1,19 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:simpleread/api.dart';
+import 'package:simpleread/auth.dart';
 import 'package:simpleread/appbar.dart';
+import 'package:simpleread/container.dart';
 
 class SimplereadHome extends StatefulWidget {
-  const SimplereadHome({super.key});
+  final SimplereadSharedState sharedState;
+  const SimplereadHome({super.key, sharedState}) : this.sharedState = sharedState;
 
   @override
-  State<SimplereadHome> createState() => _SimplereadHomeState();
+  State<SimplereadHome> createState() => _SimplereadHomeState(sharedState: sharedState);
 }
 
 class _SimplereadHomeState extends State<SimplereadHome> {
   int currentPageIndex = 0;
+  final SimplereadSharedState sharedState;
+
+  _SimplereadHomeState({required SimplereadSharedState sharedState}) : this.sharedState = sharedState;
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final AuthToken? token = sharedState.token;
+    if (token == null || !token.isValid()) {
+      return Text("ERROR: Entered home page with invalid/missing token");
+    }
+    Future<Homepage> homePage = token!.homePage()!;
     return Scaffold(
       appBar: AppBar(title: SimplereadBar()),
       body: <Widget>[
@@ -22,6 +34,22 @@ class _SimplereadHomeState extends State<SimplereadHome> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Currently reading:", style: theme.textTheme.titleLarge),
+            FutureBuilder<Homepage>(
+              future: homePage,
+              builder: (BuildContext context, AsyncSnapshot<Homepage> snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data!.currentlyReadingWidget(context);
+                } else if (snapshot.hasError) {
+                  return Text('ERROR: ${snapshot.error}');
+                } else {
+                  return SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }
+            ),
             Text("Recommended:", style: theme.textTheme.titleLarge),
           ]
         ),

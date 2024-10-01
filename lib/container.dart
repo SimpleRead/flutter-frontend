@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:simpleread/home.dart';
+import 'package:simpleread/auth.dart';
 import 'package:simpleread/login.dart';
 
 enum SimplereadPage {
@@ -17,6 +18,7 @@ class SimplereadSharedState {
   void Function(SimplereadPage) _switchPage;
   SimplereadSharedState({required void Function(SimplereadPage) switchPage}) :
     this._switchPage = switchPage;
+  AuthToken? token;
 
   void switchPage(SimplereadPage newPage) {
     this._switchPage(newPage);
@@ -41,7 +43,7 @@ class _SimplereadContainerState extends State<SimplereadContainer> {
   Widget build(BuildContext context) {
     switch (_currPage) {
     case SimplereadPage.HOME:
-      return SimplereadHome();
+      return SimplereadHome(sharedState: _sharedState);
     case SimplereadPage.LOGIN: default:
       return SimplereadLogin(sharedState: _sharedState);
     }
