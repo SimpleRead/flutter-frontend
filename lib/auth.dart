@@ -34,12 +34,12 @@ class AuthToken {
     return this._user + ":" + this._pass;
   }
 
-  String _makeUri(String s) {
+  String makeUri(String s) {
     return '${_endpoint}${s}';
   }
 
   Future<Homepage> homePage() async {
-    final uri = Uri.parse(_makeUri('/user/${_user}/home.json'));
+    final uri = Uri.parse(makeUri('/user/${_user}/home.json'));
     final response = await http.get(uri);
     if (response.statusCode != 200) {
       return Future.error('Fetching homepage returned code ${response.statusCode}');
@@ -53,7 +53,7 @@ class AuthToken {
   }
 
   Widget getThumbnail(Book book) {
-    final uri = _makeUri(book.thumbnailUri);
+    final uri = makeUri(book.thumbnailUri);
     return Image.network(
       uri,
       width: THUMBNAIL_WIDTH.toDouble(),
@@ -62,7 +62,7 @@ class AuthToken {
   }
 
   Future<Book> fetchBook(String guid) async {
-    final uri = Uri.parse(_makeUri('/book/${guid}/info.json'));
+    final uri = Uri.parse(makeUri('/book/${guid}/info.json'));
     final response = await http.get(uri);
     if (response.statusCode != 200) {
       throw HttpException("Failed to fetch book info");
@@ -72,6 +72,20 @@ class AuthToken {
       return Book.fromJson(responseMap);
     } catch (e) {
       throw FormatException("Book had invalid json");
+    }
+  }
+
+  Future<Slide> fetchSlide(String guid, int num) async {
+    final uri = Uri.parse(makeUri('/book/${guid}/slide/${num}.json'));
+    final response = await http.get(uri);
+    if (response.statusCode != 200) {
+      throw HttpException("Failed to fetch slide info");
+    }
+    try {
+      final responseMap = jsonDecode(response.body) as Map<String, dynamic>;
+      return Slide.fromJson(responseMap);
+    } catch (e) {
+      throw FormatException("Slide had invalid json");
     }
   }
 }

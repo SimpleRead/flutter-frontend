@@ -94,7 +94,20 @@ class _SimplereadPreviewState extends State<SimplereadPreview> {
   Widget _buildBottomSheet(BuildContext context) {
     return Container(
       child: ElevatedButton(
-        onPressed: () {print("Pressed!");},
+        onPressed: () {
+          late int pageNumber;
+          late String bookGuid;
+          if (sharedState.currPage == SimplereadPage.PREVIEW_EXPERIENCE) {
+            pageNumber = sharedState.experience!.progress;
+            bookGuid = sharedState.experience!.book;
+          } else {
+            pageNumber = 0;
+            bookGuid = sharedState.book!;
+          }
+          sharedState.progress = pageNumber;
+          sharedState.book = bookGuid;
+          sharedState.switchPage(SimplereadPage.WATCH);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,

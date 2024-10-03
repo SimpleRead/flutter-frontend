@@ -4,6 +4,7 @@ import 'package:simpleread/api.dart';
 import 'package:simpleread/home.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/login.dart';
+import 'package:simpleread/watch.dart';
 import 'package:simpleread/preview.dart';
 import 'package:simpleread/settings.dart';
 
@@ -12,6 +13,7 @@ enum SimplereadPage {
   HOME,
   PREVIEW_EXPERIENCE,
   PREVIEW_BOOK,
+  WATCH,
 }
 
 class SimplereadContainer extends StatefulWidget {
@@ -32,6 +34,7 @@ class SimplereadSharedState {
     this.settings = new SettingsState();
   }
   AuthToken? token;
+  int progress = 0;
   String? book;
   Experience? experience;
 
@@ -65,8 +68,10 @@ class _SimplereadContainerState extends State<SimplereadContainer> {
     case SimplereadPage.HOME:
       return SimplereadHome(sharedState: _sharedState);
     case SimplereadPage.PREVIEW_EXPERIENCE:
-    case SimplereadPage.PREVIEW_EXPERIENCE:
+    case SimplereadPage.PREVIEW_BOOK:
       return SimplereadPreview(sharedState: _sharedState);
+    case SimplereadPage.WATCH:
+      return SimplereadWatch(sharedState: _sharedState);
     case SimplereadPage.LOGIN:
     default:
       return SimplereadLogin(sharedState: _sharedState);
