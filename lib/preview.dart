@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simpleread/api.dart';
 import 'package:simpleread/auth.dart';
+import 'package:simpleread/load.dart';
 import 'package:simpleread/appbar.dart';
 import 'package:simpleread/container.dart';
 import 'package:float_column/float_column.dart';
@@ -30,15 +31,7 @@ class _SimplereadPreviewState extends State<SimplereadPreview> {
         centerTitle: true,
         title: SimplereadBar(),
       ),
-      body: FutureBuilder<Widget>(
-        future: _buildPreviewChild(context),
-        builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          }
-          return Text("Loading...");
-        }
-      ),
+      body: LoadingPage(child: _buildPreviewChild(context)),
       bottomSheet: _buildBottomSheet(context),
     );
   }
