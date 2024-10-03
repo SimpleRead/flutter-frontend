@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:simpleread/api.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/appbar.dart';
+import 'package:simpleread/settings.dart';
 import 'package:simpleread/container.dart';
 
 enum _RowType {
@@ -68,18 +69,7 @@ class _SimplereadHomeState extends State<SimplereadHome> {
             ),
           ),
         ),
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                "There are currently no settings",
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
+        SimplereadSettings(sharedState),
       ][currentPageIndex],
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {

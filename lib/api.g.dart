@@ -10,12 +10,14 @@ Work _$WorkFromJson(Map<String, dynamic> json) => Work(
       title: json['title'] as String,
       author: json['author'] as String,
       uri: json['uri'] as String,
+      synopsis: json['synopsis'] as String,
     );
 
 Map<String, dynamic> _$WorkToJson(Work instance) => <String, dynamic>{
       'title': instance.title,
       'author': instance.author,
       'uri': instance.uri,
+      'synopsis': instance.synopsis,
     };
 
 Slide _$SlideFromJson(Map<String, dynamic> json) => Slide(

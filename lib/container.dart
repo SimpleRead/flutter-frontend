@@ -5,6 +5,7 @@ import 'package:simpleread/home.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/login.dart';
 import 'package:simpleread/preview.dart';
+import 'package:simpleread/settings.dart';
 
 enum SimplereadPage {
   LOGIN,
@@ -21,12 +22,15 @@ class SimplereadContainer extends StatefulWidget {
 class SimplereadSharedState {
   void Function(SimplereadPage) _switchPage;
   SimplereadPage Function() _getPage;
+  late SettingsState settings;
   SimplereadSharedState({
       required void Function(SimplereadPage) switchPage,
       required SimplereadPage Function() getPage,
     }) :
       this._switchPage = switchPage,
-      this._getPage = getPage;
+      this._getPage = getPage {
+    this.settings = new SettingsState();
+  }
   AuthToken? token;
   Book? book;
   Experience? experience;

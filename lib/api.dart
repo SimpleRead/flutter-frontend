@@ -8,8 +8,9 @@ class Work {
   String title;
   String author;
   String uri;
+  String synopsis;
 
-  Work({required this.title, required this.author, required this.uri});
+  Work({required this.title, required this.author, required this.uri, required this.synopsis});
 
   factory Work.fromJson(Map<String, dynamic> json) => _$WorkFromJson(json);
   Map<String, dynamic> toJson() => _$WorkToJson(this);

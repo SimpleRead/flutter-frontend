@@ -53,6 +53,10 @@ class AuthToken {
 
   Widget getThumbnail(Book book) {
     final uri = _makeUri(book.thumbnailUri);
-    return Image.network(uri);
+    return Image.network(
+      uri,
+      width: THUMBNAIL_WIDTH.toDouble(),
+      height: THUMBNAIL_HEIGHT.toDouble(),
+    );
   }
 }
