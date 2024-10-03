@@ -58,11 +58,11 @@ Map<String, dynamic> _$ExperienceToJson(Experience instance) =>
     };
 
 Homepage _$HomepageFromJson(Map<String, dynamic> json) => Homepage(
-      currentlyReading: (json['current'] as List<dynamic>?)
-          ?.map((e) => Experience.fromJson(e as Map<String, dynamic>))
+      currentlyReading: (json['current'] as List<dynamic>)
+          .map((e) => Experience.fromJson(e as Map<String, dynamic>))
           .toList(),
-      recommended: (json['recommend'] as List<dynamic>?)
-          ?.map((e) => Book.fromJson(e as Map<String, dynamic>))
+      recommended: (json['recommend'] as List<dynamic>)
+          .map((e) => Book.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

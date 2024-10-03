@@ -25,6 +25,7 @@ class _SimplereadLoginState extends State<SimplereadLogin> {
     return Scaffold(
       appBar: AppBar(
         title: SimplereadBar(),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

@@ -46,8 +46,6 @@ class Book {
   @JsonKey(name: "num_slides")
   int length;
 
-  Image get thumbnail => Image.network(thumbnailUri);
-
   Book({required this.work, required this.thumbnailUri, required this.guid, required this.length});
 
   factory Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
@@ -68,10 +66,10 @@ class Experience {
 @JsonSerializable()
 class Homepage {
   @JsonKey(name: "current")
-  List<Experience>? currentlyReading;
+  List<Experience> currentlyReading;
 
   @JsonKey(name: "recommend")
-  List<Book>? recommended;
+  List<Book> recommended;
 
   Homepage({required this.currentlyReading, required this.recommended});
 
@@ -79,6 +77,13 @@ class Homepage {
   Map<String, dynamic> toJson() => _$HomepageToJson(this);
 
   Widget currentlyReadingWidget(BuildContext context) {
-    return Text('TEST');
+    return Text('[filler for books currently being read]');
+  }
+
+  Widget recommendedWidget(BuildContext context) {
+    return Text('[filler for recommended books]');
   }
 }
+
+const THUMBNAIL_HEIGHT = 300;
+const THUMBNAIL_WIDTH = 184;

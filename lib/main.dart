@@ -15,6 +15,7 @@ class SimplereadApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: SimplereadContainer(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

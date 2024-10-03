@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:simpleread/api.dart';
 import 'dart:convert';
@@ -32,8 +33,12 @@ class AuthToken {
     return this._user + ":" + this._pass;
   }
 
+  String _makeUri(String s) {
+    return '${_endpoint}${s}';
+  }
+
   Future<Homepage> homePage() async {
-    final uri = Uri.parse('${_endpoint}/user/${_user}/home.json');
+    final uri = Uri.parse(_makeUri('/user/${_user}/home.json'));
     final response = await http.get(uri);
     if (response.statusCode != 200) {
       return Future.error('Fetching homepage returned code ${response.statusCode}');
@@ -44,5 +49,10 @@ class AuthToken {
     } catch (e) {
       return Future.error('Failed parse home page: ${e}');
     }
+  }
+
+  Widget getThumbnail(Book book) {
+    final uri = _makeUri(book.thumbnailUri);
+    return Image.network(uri);
   }
 }

@@ -10,12 +10,9 @@ class SimplereadBar extends StatefulWidget {
 class _SimplereadBarState extends State<SimplereadBar> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Image(
-        image: AssetImage("images/simpleread-sr.png"),
-        height: AppBar().preferredSize.height,
-      )],
+    return Image(
+      image: AssetImage("images/simpleread-sr.png"),
+      height: AppBar().preferredSize.height-10,
     );
   }
 }

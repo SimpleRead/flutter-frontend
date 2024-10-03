@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:simpleread/api.dart';
 import 'package:simpleread/home.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/login.dart';
+import 'package:simpleread/preview.dart';
 
 enum SimplereadPage {
   LOGIN,
   HOME,
+  PREVIEW_EXPERIENCE,
+  PREVIEW_BOOK,
 }
 
 class SimplereadContainer extends StatefulWidget {
@@ -16,13 +20,22 @@ class SimplereadContainer extends StatefulWidget {
 
 class SimplereadSharedState {
   void Function(SimplereadPage) _switchPage;
-  SimplereadSharedState({required void Function(SimplereadPage) switchPage}) :
-    this._switchPage = switchPage;
+  SimplereadPage Function() _getPage;
+  SimplereadSharedState({
+      required void Function(SimplereadPage) switchPage,
+      required SimplereadPage Function() getPage,
+    }) :
+      this._switchPage = switchPage,
+      this._getPage = getPage;
   AuthToken? token;
+  Book? book;
+  Experience? experience;
 
   void switchPage(SimplereadPage newPage) {
     this._switchPage(newPage);
   }
+
+  SimplereadPage get currPage => _getPage();
 }
 
 class _SimplereadContainerState extends State<SimplereadContainer> {
@@ -30,7 +43,10 @@ class _SimplereadContainerState extends State<SimplereadContainer> {
   SimplereadPage _currPage = SimplereadPage.LOGIN;
 
   _SimplereadContainerState() {
-    this._sharedState = new SimplereadSharedState(switchPage: switchPage);
+    this._sharedState = new SimplereadSharedState(
+      switchPage: switchPage,
+      getPage: () => _currPage,
+    );
   }
 
   void switchPage(SimplereadPage newPage) {
@@ -44,7 +60,11 @@ class _SimplereadContainerState extends State<SimplereadContainer> {
     switch (_currPage) {
     case SimplereadPage.HOME:
       return SimplereadHome(sharedState: _sharedState);
-    case SimplereadPage.LOGIN: default:
+    case SimplereadPage.PREVIEW_EXPERIENCE:
+    case SimplereadPage.PREVIEW_EXPERIENCE:
+      return SimplereadPreview(sharedState: _sharedState);
+    case SimplereadPage.LOGIN:
+    default:
       return SimplereadLogin(sharedState: _sharedState);
     }
   }
