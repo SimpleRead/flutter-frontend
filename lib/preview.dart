@@ -30,24 +30,34 @@ class _SimplereadPreviewState extends State<SimplereadPreview> {
         centerTitle: true,
         title: SimplereadBar(),
       ),
-      body: _buildPreviewChild(context),
+      body: FutureBuilder<Widget>(
+        future: _buildPreviewChild(context),
+        builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          }
+          return Text("Loading...");
+        }
+      ),
+      bottomSheet: _buildBottomSheet(context),
     );
   }
 
-  Widget _buildPreviewChild(BuildContext context) {
-    Book book;
+  Future<Widget> _buildPreviewChild(BuildContext context) async {
+    String bookGuid;
     final ThemeData theme = Theme.of(context);
     switch (sharedState.currPage) {
     case SimplereadPage.PREVIEW_EXPERIENCE:
-      book = sharedState.experience!.book;
+      bookGuid = sharedState.experience!.book;
       break;
     case SimplereadPage.PREVIEW_BOOK:
-      book = sharedState.book!;
+      bookGuid = sharedState.book!;
       break;
     default:
       throw new AssertionError('Invalid preview type ${sharedState.currPage}');
       break;
     }
+    Book book = await sharedState.token!.fetchBook(bookGuid);
     List<Widget> items = [];
     var image = sharedState.token!.getThumbnail(book);
     var title = Flexible(
@@ -85,6 +95,21 @@ class _SimplereadPreviewState extends State<SimplereadPreview> {
     return ListView(
       padding: EdgeInsets.all(16),
       children: items,
+    );
+  }
+
+  Widget _buildBottomSheet(BuildContext context) {
+    return Container(
+      child: ElevatedButton(
+        onPressed: () {print("Pressed!");},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          minimumSize: Size.fromHeight(50),
+        ),
+        child: Text("Play movie"),
+      ),
+      padding: EdgeInsets.only(bottom: 8.0),
     );
   }
 }

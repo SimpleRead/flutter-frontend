@@ -103,7 +103,7 @@ class _SimplereadHomeState extends State<SimplereadHome> {
     Widget content;
     if (snapshot.hasData) {
       Homepage h = snapshot.data!;
-      Book Function(int) nthBook;
+      String Function(int) nthBook;
       void Function(int) clickBook;
       int numBooks;
       List<Widget> rowWidgets = [];
@@ -130,25 +130,46 @@ class _SimplereadHomeState extends State<SimplereadHome> {
         break;
       }
       for (int i = 0; i < numBooks; ++i) {
-        final book = nthBook(i);
-        rowWidgets.add(InkWell(
-          onTap: () => clickBook(i),
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                token!.getThumbnail(book),
-                Container(
-                  width: THUMBNAIL_WIDTH.toDouble(),
-                  child: Text(
-                    book.work.title,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
+        String bookGuid = nthBook(i);
+        Future<Book> book = token.fetchBook(bookGuid);
+        rowWidgets.add(FutureBuilder<Book>(
+          future: book,
+          builder: (BuildContext context, AsyncSnapshot<Book> snapshot) {
+            if (snapshot.hasData) {
+              Book book = snapshot.data!;
+              return InkWell(
+                onTap: () => clickBook(i),
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      token!.getThumbnail(book),
+                      Container(
+                        width: THUMBNAIL_WIDTH.toDouble(),
+                        child: Text(
+                          book.work.title,
+                          softWrap: false,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
+              );
+            } else if (snapshot.hasError) {
+              return SizedBox(
+                width: THUMBNAIL_WIDTH + 20,
+                height: THUMBNAIL_WIDTH + 40,
+                child: Text('ERROR: ${snapshot.error}'),
+              );
+            } else {
+              return SizedBox(
+                width: THUMBNAIL_WIDTH + 20,
+                height: THUMBNAIL_WIDTH + 40,
+                child: Text("Loading..."),
+              );
+            }
+          }
         ));
       }
       content = Container(

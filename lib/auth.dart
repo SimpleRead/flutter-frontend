@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:simpleread/api.dart';
 import 'dart:convert';
+import 'dart:io';
 
 class AuthToken {
   String _user = "";
@@ -58,5 +59,19 @@ class AuthToken {
       width: THUMBNAIL_WIDTH.toDouble(),
       height: THUMBNAIL_HEIGHT.toDouble(),
     );
+  }
+
+  Future<Book> fetchBook(String guid) async {
+    final uri = Uri.parse(_makeUri('/book/${guid}/info.json'));
+    final response = await http.get(uri);
+    if (response.statusCode != 200) {
+      throw HttpException("Failed to fetch book info");
+    }
+    try {
+      final responseMap = jsonDecode(response.body) as Map<String, dynamic>;
+      return Book.fromJson(responseMap);
+    } catch (e) {
+      throw FormatException("Book had invalid json");
+    }
   }
 }

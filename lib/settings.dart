@@ -22,11 +22,22 @@ class _SimplereadSettingsState extends State<SimplereadSettings> {
       _sharedState = sharedState;
 
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return ListView(
       children: [
         Stack(
           children: [
-            Text("Lindamood Bell Mode"),
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Text(
+                  "Lindamood Bell Mode",
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            ),
             Container(
               alignment: Alignment.centerRight,
               child: Switch(

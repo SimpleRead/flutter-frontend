@@ -32,7 +32,7 @@ class SimplereadSharedState {
     this.settings = new SettingsState();
   }
   AuthToken? token;
-  Book? book;
+  String? book;
   Experience? experience;
 
   void switchPage(SimplereadPage newPage) {

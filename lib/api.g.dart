@@ -47,7 +47,7 @@ Map<String, dynamic> _$BookToJson(Book instance) => <String, dynamic>{
     };
 
 Experience _$ExperienceFromJson(Map<String, dynamic> json) => Experience(
-      book: Book.fromJson(json['book'] as Map<String, dynamic>),
+      book: json['book'] as String,
       progress: (json['progress'] as num).toInt(),
       guid: json['guid'] as String,
     );
@@ -63,9 +63,8 @@ Homepage _$HomepageFromJson(Map<String, dynamic> json) => Homepage(
       currentlyReading: (json['current'] as List<dynamic>)
           .map((e) => Experience.fromJson(e as Map<String, dynamic>))
           .toList(),
-      recommended: (json['recommend'] as List<dynamic>)
-          .map((e) => Book.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      recommended:
+          (json['recommend'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$HomepageToJson(Homepage instance) => <String, dynamic>{

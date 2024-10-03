@@ -55,7 +55,7 @@ class Book {
 
 @JsonSerializable()
 class Experience {
-  Book book;
+  String book;
   int progress;
   String guid;
   Experience({required this.book, required this.progress, required this.guid});
@@ -70,7 +70,7 @@ class Homepage {
   List<Experience> currentlyReading;
 
   @JsonKey(name: "recommend")
-  List<Book> recommended;
+  List<String> recommended;
 
   Homepage({required this.currentlyReading, required this.recommended});
 
