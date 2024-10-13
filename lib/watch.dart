@@ -20,25 +20,16 @@ class SimplereadWatch extends StatefulWidget {
 
 class _SimplereadWatchState extends State<SimplereadWatch> {
   final SimplereadSharedState sharedState;
-  static AudioPlayer? _player;
   late int pageNum;
-  late String book;
+  Book? _book;
+  late String _bookGuid;
   late StreamController<Widget> _controller;
   Stream<Widget>? _stream;
 
   _SimplereadWatchState({required SimplereadSharedState sharedState}) :
       this.sharedState = sharedState {
-    if (_player == null) {
-      _player = AudioPlayer();
-    }
     pageNum = sharedState.progress;
-    book = sharedState.book!;
-    _player!.onPlayerComplete.listen((_) {
-      if (pageNum < book.length) {
-        ++pageNum;
-        sendSlide().then((_) => setState(() {}));
-      }
-    });
+    _bookGuid = sharedState.book!;
   }
 
   @override
@@ -50,17 +41,52 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   }
 
   Future<Slide> getSlide() async {
-    return await sharedState.token!.fetchSlide(book, pageNum);
+    return await sharedState.token!.fetchSlide(_bookGuid, pageNum);
   }
 
   Future<void> sendSlide() async {
+    if (_book == null) {
+      _book = await sharedState.token!.fetchBook(_bookGuid);
+    }
+    AudioPlayer player = AudioPlayer();
+    player.onPlayerComplete.listen((_) {
+      if (pageNum < _book!.length) {
+        ++pageNum;
+        sendSlide();
+      }
+    });
+    sendSlideWithPlayer(player).then((_) => setState(() {}));
+  }
+
+  Future<void> sendSlideWithPlayer(AudioPlayer player) async {
     Slide slide = await getSlide();
-    await _player!.play(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
+    for (;;) {
+      bool shouldBreak = true;
+      try {
+        await player.setSource(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
+        await player.resume();
+      } on AudioPlayerException catch (e) {
+        continue;
+      } on PlatformException catch (e) {
+        continue;
+      } catch (e) {
+        continue;
+      }
+      break;
+    }
     sendPicture(slide);
   }
 
   Future<void> sendPicture(Slide slide) async {
     String uri = sharedState.token!.makeUri(slide.imageUri);
+    /*
+    _controller.add(Column(
+      children: [
+        Image.network(uri),
+        Text(slide.text),
+      ]
+    ));
+    */
     _controller.add(Image.network(uri));
   }
 
