@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:simpleread/api.dart';
 import 'package:simpleread/auth.dart';
 import 'package:simpleread/load.dart';
+import 'package:simpleread/appbar.dart';
 import 'package:simpleread/container.dart';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -93,31 +94,50 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
     String uri = sharedState.token!.makeUri(slide.imageUri);
     String slideText = slide.text.trim().replaceAll(RegExp(r'\s+'), ' ');
     _controller.add(Material(
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          Flex(
-            direction: isScreenWide ? Axis.horizontal : Axis.vertical,
-            children: [
-              Expanded(
-                child: Image.network(uri),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        playPauseButton(),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5, right: 5),
-                      child: Text(slideText),
-                    ),
-                  ],
+          AppBar(
+            leading: IconButton(
+              icon: new Icon(Icons.arrow_back),
+              onPressed: () {
+                // TODO: Save the state on the backend
+                player.release();
+                sharedState.experience = new Experience(
+                  book: _bookGuid,
+                  progress: pageNum,
+                  guid: "nil",
+                );
+                sharedState.switchPage(SimplereadPage.PREVIEW_EXPERIENCE);
+              },
+            ),
+            centerTitle: true,
+            title: SimplereadBar(),
+          ),
+          Expanded(
+            child: Flex(
+              direction: isScreenWide ? Axis.horizontal : Axis.vertical,
+              children: [
+                Expanded(
+                  child: Image.network(uri),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          playPauseButton(),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 5, right: 5),
+                        child: Text(slideText),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

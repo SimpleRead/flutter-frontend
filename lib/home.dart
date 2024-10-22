@@ -143,7 +143,11 @@ class _SimplereadHomeState extends State<SimplereadHome> {
                   padding: EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      token!.getThumbnail(book),
+                      Container(
+                        width: THUMBNAIL_WIDTH.toDouble(),
+                        height: THUMBNAIL_HEIGHT.toDouble(),
+                        child: token!.getThumbnail(book),
+                      ),
                       Container(
                         width: THUMBNAIL_WIDTH.toDouble(),
                         child: Text(
