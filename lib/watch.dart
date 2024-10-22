@@ -29,6 +29,7 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   late BuildContext context;
   late AudioPlayer player;
   bool isMuted = false;
+  bool isPaused = false;
 
   void initPlayer() {
     player = AudioPlayer();
@@ -69,19 +70,21 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
       _book = await sharedState.token!.fetchBook(_bookGuid);
     }
     Slide slide = await getSlide();
-    for (;;) {
-      bool shouldBreak = true;
-      try {
-        await player.setSource(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
-        await player.resume();
-      } on AudioPlayerException catch (e) {
-        continue;
-      } on PlatformException catch (e) {
-        continue;
-      } catch (e) {
-        continue;
+    if (!isPaused) {
+      for (;;) {
+        bool shouldBreak = true;
+        try {
+          await player.setSource(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
+          await player.resume();
+        } on AudioPlayerException catch (e) {
+          continue;
+        } on PlatformException catch (e) {
+          continue;
+        } catch (e) {
+          continue;
+        }
+        break;
       }
-      break;
     }
     sendPicture(slide);
   }
@@ -152,10 +155,11 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   }
 
   Widget playPauseButton() {
-    if (player.desiredState != PlayerState.stopped) {
+    if (!isPaused) {
       return IconButton(
         icon: const Icon(Icons.pause),
         onPressed: () async {
+          isPaused = true;
           player.release();
           initPlayer();
           setState(() {});
@@ -165,6 +169,7 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
       return IconButton(
         icon: const Icon(Icons.play_arrow),
         onPressed: () async {
+          isPaused = false;
           await sendSlide();
           setState(() {});
         },
