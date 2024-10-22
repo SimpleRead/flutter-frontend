@@ -136,7 +136,27 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back_ios),
+                            onPressed: () async {
+                              await player.release();
+                              initPlayer();
+                              --pageNum;
+                              isPaused = true;
+                              sendSlide();
+                            }
+                          ),
                           playPauseButton(),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward_ios),
+                            onPressed: () async {
+                              await player.release();
+                              initPlayer();
+                              ++pageNum;
+                              isPaused = true;
+                              sendSlide();
+                            }
+                          ),
                         ],
                       ),
                       Padding(
