@@ -26,11 +26,23 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   late StreamController<Widget> _controller;
   Stream<Widget>? _stream;
   late BuildContext context;
+  late AudioPlayer player;
+
+  void initPlayer() {
+    player = AudioPlayer();
+    player.onPlayerComplete.listen((_) async {
+      if (pageNum < _book!.length) {
+        ++pageNum;
+        sendSlide();
+      }
+    });
+  }
 
   _SimplereadWatchState({required SimplereadSharedState sharedState}) :
       this.sharedState = sharedState {
     pageNum = sharedState.progress;
     _bookGuid = sharedState.book!;
+    initPlayer();
   }
 
   @override
@@ -51,28 +63,11 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
     if (_book == null) {
       _book = await sharedState.token!.fetchBook(_bookGuid);
     }
-    AudioPlayer player = AudioPlayer();
-    player.onPlayerComplete.listen((_) {
-      if (pageNum < _book!.length) {
-        ++pageNum;
-        sendSlide();
-      }
-    });
-    sendSlideWithPlayer(player).then((_) => setState(() {}));
-  }
-
-  Future<void> sendCurrentSlide() async {
-    Slide slide = await getSlide();
-    sendPicture(slide);
-  }
-
-  Future<void> sendSlideWithPlayer(AudioPlayer player) async {
     Slide slide = await getSlide();
     for (;;) {
       bool shouldBreak = true;
       try {
         await player.setSource(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
-        await player.setVolume(0);
         await player.resume();
       } on AudioPlayerException catch (e) {
         continue;
@@ -86,20 +81,68 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
     sendPicture(slide);
   }
 
+  Future<void> sendCurrentSlide() async {
+    Slide slide = await getSlide();
+    await sendPicture(slide);
+  }
+
   Future<void> sendPicture(Slide slide) async {
     Size size = MediaQuery.sizeOf(this.context);
     double ratio = size.width / size.height;
     bool isScreenWide = ratio >= 1.2;
     String uri = sharedState.token!.makeUri(slide.imageUri);
-    _controller.add(Flex(
-      direction: isScreenWide ? Axis.horizontal : Axis.vertical,
-      children: [
-        Expanded(
-          child: Image.network(uri),
-        ),
-        Text(slide.text),
-      ]
+    String slideText = slide.text.trim().replaceAll(RegExp(r'\s+'), ' ');
+    _controller.add(Material(
+      child: Stack(
+        children: <Widget>[
+          Flex(
+            direction: isScreenWide ? Axis.horizontal : Axis.vertical,
+            children: [
+              Expanded(
+                child: Image.network(uri),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        playPauseButton(),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 5, right: 5),
+                      child: Text(slideText),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     ));
+  }
+
+  Widget playPauseButton() {
+    if (player.desiredState != PlayerState.stopped) {
+      return IconButton(
+        icon: const Icon(Icons.pause),
+        onPressed: () async {
+          player.release();
+          initPlayer();
+          setState(() {});
+        },
+      );
+    } else {
+      return IconButton(
+        icon: const Icon(Icons.play_arrow),
+        onPressed: () async {
+          await sendSlide();
+          setState(() {});
+        },
+      );
+    }
   }
 
   Future<void> initStream(BuildContext context) async {
