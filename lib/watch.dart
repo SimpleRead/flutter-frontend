@@ -28,9 +28,13 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   Stream<Widget>? _stream;
   late BuildContext context;
   late AudioPlayer player;
+  bool isMuted = false;
 
   void initPlayer() {
     player = AudioPlayer();
+    if (isMuted) {
+      player.setVolume(0);
+    }
     player.onPlayerComplete.listen((_) async {
       if (pageNum < _book!.length) {
         ++pageNum;
@@ -112,6 +116,9 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
             ),
             centerTitle: true,
             title: SimplereadBar(),
+            actions: <Widget>[
+              muteButton(),
+            ],
           ),
           Expanded(
             child: Flex(
@@ -159,6 +166,28 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
         icon: const Icon(Icons.play_arrow),
         onPressed: () async {
           await sendSlide();
+          setState(() {});
+        },
+      );
+    }
+  }
+
+  Widget muteButton() {
+    if (isMuted) {
+      return IconButton(
+        icon: new Icon(Icons.volume_off),
+        onPressed: () {
+          player.setVolume(1.0);
+          isMuted = false;
+          setState(() {});
+        },
+      );
+    } else {
+      return IconButton(
+        icon: new Icon(Icons.volume_up),
+        onPressed: () {
+          player.setVolume(0.0);
+          isMuted = true;
           setState(() {});
         },
       );
