@@ -113,7 +113,7 @@ class _SimplereadPreviewState extends State<SimplereadPreview> {
           foregroundColor: Colors.white,
           minimumSize: Size.fromHeight(50),
         ),
-        child: Text("Play movie"),
+        child: Text("Play visualaudio book"),
       ),
       padding: EdgeInsets.only(bottom: 8.0),
     );

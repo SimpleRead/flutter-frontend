@@ -25,6 +25,7 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   late String _bookGuid;
   late StreamController<Widget> _controller;
   Stream<Widget>? _stream;
+  late BuildContext context;
 
   _SimplereadWatchState({required SimplereadSharedState sharedState}) :
       this.sharedState = sharedState {
@@ -34,9 +35,11 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
 
   @override
   Widget build(BuildContext context) {
+    this.context = context;
     if (_stream == null) {
       initStream(context);
     }
+    sendCurrentSlide();
     return LoadingStream(child: _stream);
   }
 
@@ -58,12 +61,18 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
     sendSlideWithPlayer(player).then((_) => setState(() {}));
   }
 
+  Future<void> sendCurrentSlide() async {
+    Slide slide = await getSlide();
+    sendPicture(slide);
+  }
+
   Future<void> sendSlideWithPlayer(AudioPlayer player) async {
     Slide slide = await getSlide();
     for (;;) {
       bool shouldBreak = true;
       try {
         await player.setSource(UrlSource(sharedState.token!.makeUri(slide.audioUri)));
+        await player.setVolume(0);
         await player.resume();
       } on AudioPlayerException catch (e) {
         continue;
@@ -78,16 +87,19 @@ class _SimplereadWatchState extends State<SimplereadWatch> {
   }
 
   Future<void> sendPicture(Slide slide) async {
+    Size size = MediaQuery.sizeOf(this.context);
+    double ratio = size.width / size.height;
+    bool isScreenWide = ratio >= 1.2;
     String uri = sharedState.token!.makeUri(slide.imageUri);
-    /*
-    _controller.add(Column(
+    _controller.add(Flex(
+      direction: isScreenWide ? Axis.horizontal : Axis.vertical,
       children: [
-        Image.network(uri),
+        Expanded(
+          child: Image.network(uri),
+        ),
         Text(slide.text),
       ]
     ));
-    */
-    _controller.add(Image.network(uri));
   }
 
   Future<void> initStream(BuildContext context) async {
